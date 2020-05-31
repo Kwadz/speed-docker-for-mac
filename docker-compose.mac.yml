@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  mutagen:
+    build:
+      context: .
+      dockerfile: docker/mutagen/Dockerfile
+    init: true
+    container_name: "${PROJECT_NAME}_mutagen"
+    volumes:
+      - codebase:/var/www  
+
+  php-fpm:
+    volumes:
+      - codebase:/var/www
+
+  nginx:
+    volumes:
+      - codebase:/var/www
+ 
+volumes: 
+  codebase:

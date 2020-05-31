@@ -1,0 +1,17 @@
+sync:
+    defaults:
+      ignore:
+        vcs: true
+        paths:
+          - .DS_Store # macOS files
+      permissions:
+        defaultFileMode: 644
+        defaultDirectoryMode: 755
+    codebase:
+      alpha: ".app"
+      beta: "docker://mutagen/var/www"
+      mode: "two-way-resolved"
+      ignore:
+        paths:
+          - "/var/"
+          - "/vendor/"
