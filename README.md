@@ -1,8 +1,8 @@
 # How to speed up Docker for Mac?
 
-It's a known issue that _Docker for Mac_ is slow when using shared volumes containing a big amount of files, see https://github.com/docker/for-mac/issues/77.
+It's a known issue that Docker for Mac is slow when using shared volumes containing a big amount of files, see https://github.com/docker/for-mac/issues/77.
 
-So, some workarounds came like [`:cached` ](https://docs.docker.com/docker-for-mac/osxfs-caching/#cached) and [docker-sync](http://docker-sync.io/). However it's not totally satisfactory because it's still slow compared to native and _docker-sync_ consumes a lot of resources when syncing. 
+So, some workarounds came like [`:cached` ](https://docs.docker.com/docker-for-mac/osxfs-caching/#cached) and [docker-sync](http://docker-sync.io/). However it's not totally satisfactory because it's still slow compared to native and docker-sync consumes a lot of resources when syncing. 
 
 That being said, there is a good alternative, not to say perfect, which is [Mutagen](https://mutagen.io/). A benchmark is available [here](https://medium.com/netresearch/improving-performance-for-docker-on-mac-computers-when-using-named-volumes-55580efcbf68#bf1b). It's almost **as fast as native** shared volumes with Linux!
 
