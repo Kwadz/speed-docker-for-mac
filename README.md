@@ -24,5 +24,16 @@ At the project root directory, execute:
 
     mutagen project start
 
+## Note
 
-
+When using a non-root user in the container you can simply add the following in _mutagen.yml_:
+```
+  codebase:
+    # ...
+    configurationBeta:
+      permissions:
+        defaultFileMode: 644
+        defaultDirectoryMode: 755
+        defaultOwner: "myuser"
+        defaultGroup: "myuser"
+```
