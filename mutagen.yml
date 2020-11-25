@@ -8,7 +8,7 @@ sync:
         defaultFileMode: 644
         defaultDirectoryMode: 755
     codebase:
-      alpha: ".app"
+      alpha: "./app"
       beta: "docker://mutagen/var/www"
       mode: "two-way-resolved"
       ignore:
