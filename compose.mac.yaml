@@ -1,0 +1,30 @@
+services:
+  php-fpm:
+    volumes:
+      - code:/var/www
+
+  nginx:
+    volumes:
+      - code:/var/www:ro
+
+volumes:
+  code:
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+        paths:
+          - .DS_Store
+      permissions:
+        defaultFileMode: 0644
+        defaultDirectoryMode: 0755
+    code:
+      alpha: "./app"
+      beta: "volume://code"
+      mode: "two-way-resolved"
+      ignore:
+        paths:
+          - "/var/cache/"
+          - "/var/log/"

@@ -1,24 +1,33 @@
 {
     "type": "project",
     "license": "proprietary",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
-        "php": "^7.2.5",
+        "php": ">=8.2",
         "ext-ctype": "*",
         "ext-iconv": "*",
-        "sensio/framework-extra-bundle": "^5.5",
-        "symfony/console": "5.1.*",
-        "symfony/dotenv": "5.1.*",
-        "symfony/flex": "^1.3.1",
-        "symfony/framework-bundle": "5.1.*",
-        "symfony/orm-pack": "^1.0",
-        "symfony/twig-bundle": "5.1.*",
-        "symfony/yaml": "5.1.*"
+        "doctrine/doctrine-bundle": "^2.18",
+        "doctrine/doctrine-migrations-bundle": "^3.7",
+        "doctrine/orm": "^3.6",
+        "symfony/console": "6.4.*",
+        "symfony/dotenv": "6.4.*",
+        "symfony/flex": "^2.4",
+        "symfony/framework-bundle": "6.4.*",
+        "symfony/runtime": "6.4.*",
+        "symfony/twig-bundle": "6.4.*",
+        "symfony/yaml": "6.4.*"
     },
     "require-dev": {
-        "doctrine/doctrine-fixtures-bundle": "^3.3",
-        "symfony/maker-bundle": "^1.14"
+        "doctrine/doctrine-fixtures-bundle": "^3.6",
+        "symfony/maker-bundle": "^1.59"
     },
     "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
         "preferred-install": {
             "*": "dist"
         },
@@ -33,15 +42,6 @@
         "psr-4": {
             "App\\Tests\\": "tests/"
         }
-    },
-    "replace": {
-        "paragonie/random_compat": "2.*",
-        "symfony/polyfill-ctype": "*",
-        "symfony/polyfill-iconv": "*",
-        "symfony/polyfill-php72": "*",
-        "symfony/polyfill-php71": "*",
-        "symfony/polyfill-php70": "*",
-        "symfony/polyfill-php56": "*"
     },
     "scripts": {
         "auto-scripts": {
@@ -61,7 +61,11 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "5.1.*"
+            "docker": false,
+            "require": "6.4.*",
+            "runtime": {
+                "use_runtime": "Symfony\\Component\\Runtime\\SymfonyRuntime"
+            }
         }
     }
 }

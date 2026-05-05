@@ -2,29 +2,22 @@
 
 namespace App\Entity;
 
+use App\Repository\PostRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
- */
+#[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
-     */
-    private $id;
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
+    private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(length: 255)]
+    private ?string $name = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $content;
+    #[ORM\Column(length: 255)]
+    private ?string $content = null;
 
     public function getId(): ?int
     {
@@ -36,7 +29,7 @@ class Post
         return $this->name;
     }
 
-    public function setName(string $name): self
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -48,7 +41,7 @@ class Post
         return $this->content;
     }
 
-    public function setContent(string $content): self
+    public function setContent(string $content): static
     {
         $this->content = $content;
 

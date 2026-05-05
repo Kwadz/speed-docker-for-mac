@@ -1,0 +1,49 @@
+name: ${COMPOSE_PROJECT_NAME:-speed-docker-for-mac}
+
+services:
+  php-fpm:
+    build:
+      context: ./docker/php-fpm
+    environment:
+      APP_ENV: ${APP_ENV:-dev}
+      APP_DEBUG: ${APP_DEBUG:-1}
+      APP_SECRET: ${APP_SECRET}
+      DATABASE_URL: "mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@database:3306/${DATABASE_NAME}?serverVersion=mariadb-11.4.4-MariaDB"
+    volumes:
+      - ./app:/var/www
+    depends_on:
+      database:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./app:/var/www:ro
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./docker/nginx/sites:/etc/nginx/sites-available:ro
+    depends_on:
+      - php-fpm
+    ports:
+      - "${HTTP_PORT:-80}:80"
+
+  database:
+    image: mariadb:11.4
+    environment:
+      MARIADB_DATABASE: ${DATABASE_NAME}
+      MARIADB_USER: ${DATABASE_USER}
+      MARIADB_PASSWORD: ${DATABASE_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DATABASE_ROOT_PASSWORD}
+    volumes:
+      - database_data:/var/lib/mysql
+    ports:
+      - "${DATABASE_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  database_data:

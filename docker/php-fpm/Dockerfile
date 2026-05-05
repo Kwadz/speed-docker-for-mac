@@ -1,15 +1,25 @@
-FROM php:7.4-fpm-alpine
+# syntax=docker/dockerfile:1
+FROM php:8.3-fpm-alpine
 
-COPY wait-for-it.sh /usr/bin/wait-for-it
+RUN apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
+        icu-dev \
+        libzip-dev \
+    && apk add --no-cache \
+        git \
+        icu-libs \
+        libzip \
+        mariadb-client \
+    && docker-php-ext-install -j"$(nproc)" \
+        intl \
+        opcache \
+        pdo_mysql \
+        zip \
+    && apk del .build-deps \
+    && rm -rf /var/cache/apk/*
 
-RUN chmod +x /usr/bin/wait-for-it
-RUN apk --update --no-cache add git
-RUN docker-php-ext-install pdo_mysql
-
-COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
-
-CMD composer install ; wait-for-it database:3306 -- bin/console doctrine:migrations:migrate --no-interaction ;  php-fpm
 
 EXPOSE 9000
