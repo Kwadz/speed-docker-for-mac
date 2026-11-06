@@ -1,0 +1,54 @@
+name: PHP and Docker smoke tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  php-and-docker:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: ctype, iconv, intl, mbstring, pdo_mysql, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Validate and audit dependencies
+        working-directory: app
+        run: |
+          composer validate --strict --no-check-publish
+          composer install --no-interaction --no-progress --prefer-dist
+          composer audit --locked
+          php -r '$l=json_decode(file_get_contents("composer.lock"),true,512,JSON_THROW_ON_ERROR);foreach($l["packages"] as $p){if($p["name"]==="symfony/http-foundation"){if(!str_starts_with($p["version"],"v6.4."))exit(1);echo $p["name"]." ".$p["version"].PHP_EOL;exit(0);}}exit(2);'
+          APP_ENV=prod APP_SECRET=github-actions-test php bin/console cache:clear --env=prod
+
+      - name: Build containers and test Symfony homepage
+        run: |
+          docker compose up -d --build
+          docker compose exec -T php-fpm composer install --no-interaction --no-progress
+          docker compose exec -T php-fpm php bin/console doctrine:migrations:migrate --no-interaction
+          docker compose exec -T php-fpm php bin/console doctrine:fixtures:load --no-interaction
+          for i in {1..20}; do
+            if curl --fail --silent --show-error http://localhost/ -o /tmp/homepage.html; then
+              echo "Symfony homepage is responding successfully"
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+
+      - name: Container logs on failure
+        if: failure()
+        run: docker compose logs --no-color --tail=150
+
+      - name: Shut down containers
+        if: always()
+        run: docker compose down -v
